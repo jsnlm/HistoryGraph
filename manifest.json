@@ -1,5 +1,5 @@
 {
-  "name": "Typed URL History",
+  "name": "History Graph",
   "version": "1.2",
   "description": "Reads your history, and shows the top ten pages you go to by typing the URL.",
   "permissions": [
