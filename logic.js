@@ -259,12 +259,14 @@ function createGraph(treeData) {
             $(this).find(".linkPicture").hide();
             console.log('set to xxxx');
             $(this).children('rect').attr("width", $(this).find(".linkHyperlink")[0].getComputedTextLength() + 40);
+            $(this).css('z-index', '10');
         })
             .on ("mouseleave", function(){
             $(this).find(".linkHyperlink").hide();
             $(this).find(".linkPicture").show();
             console.log('set to ' + nodeDefaultWidth + 'px');
             $(this).children('rect').attr("width", nodeDefaultWidth + "px");
+            $(this).css('z-index', '0');
         });
 
         var link = nodeEnter.append("a").attr("href", function (d) {
@@ -364,9 +366,9 @@ function createGraph(treeData) {
         // Change the circle fill depending on whether it has children and is collapsed
         node.select("rect.nodeCircle")
             .attr("r", 4.5)
-            // .style("fill", function(d) {
-            //     return d._children ? "rgb(255, 155, 155)" : "#fff";
-            // })
+             .style("fill", function(d) {
+                 return d.active ? "rgb(255, 155, 155)" : d._children ? "lightblue":"#fff";
+             })
         ;
 
         // Transition nodes to their new position.
@@ -453,7 +455,3 @@ function createGraph(treeData) {
     update(root);
     centerNode(root);
 }
-
-$(function() {
-  //  console.log(chrome.extension.getBackgroundPage().getTree());
-});
