@@ -5,13 +5,6 @@
   "permissions": [
     "history", "tabs", "webNavigation"
   ],
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["jquery-1.11.1.min.js", "d3/d3.v3.js", "logic.js"],
-      "run_at": "document_end"
-    }
-  ],
   "browser_action": {
     "default_popup": "GraphView.html",
     "default_icon": "icon.png"

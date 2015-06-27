@@ -105,21 +105,6 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
         .attr("class", "overlay")
         .call(zoomListener);
 
-
-    function endDrag() {
-        selectedNode = null;
-        d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
-        d3.select(domNode).attr('class', 'node');
-        // now restore the mouseover event or we won't be able to drag a 2nd time
-        d3.select(domNode).select('.ghostCircle').attr('pointer-events', '');
-        updateTempConnector();
-        if (draggingNode !== null) {
-            update(root);
-            centerNode(draggingNode);
-            draggingNode = null;
-        }
-    }
-
     // Helper functions for collapsing and expanding nodes.
 
     function collapse(d) {
