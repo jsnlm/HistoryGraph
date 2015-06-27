@@ -58,7 +58,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 });
 
 function getTree(tabId) {
-    var root = JSON.parse(sessionStorage.getItem(sessionStorage.getItem('root' + tabId).toString()));
+    var root = JSON.parse(sessionStorage.getItem(sessionStorage.getItem('root' + tabId)));
     var currentKey = sessionStorage.getItem('current' + tabId);
     return replaceHash(root, currentKey);
 }
