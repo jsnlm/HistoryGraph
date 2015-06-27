@@ -1,6 +1,20 @@
 var counter = 0;
 var shouldUpdate = true;
 
+chrome.tabs.getAllInWindow(function(tabs){
+    for(var i = 0; i < tabs.length; i++) {
+        var tab = tabs[i];
+        if(!sessionStorage.getItem('root' + tab.id)) {
+            console.log(tab.url, tab.id);
+            var root = {nodeId: 0, name: "williamChops", href: tab.url, parent: -1, children: []};
+            sessionStorage.setItem('root' + tab.id, counter);
+            sessionStorage.setItem(counter.toString(), JSON.stringify(root));
+            sessionStorage.setItem('current' + tab.id, counter);
+            counter++;
+        }
+    }
+});
+
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if (!shouldUpdate) {
         shouldUpdate = true;
@@ -19,7 +33,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
             console.log(changeInfo.url);
             console.log(tab.url);
             if (parentNode)
-            console.log(parentNode.href);
+                console.log(parentNode.href);
             if (parentNode && parentNode.href == tab.url) {
                 current = oldNode.parent;
                 console.log('second current ' + current);
@@ -41,7 +55,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
             var newNode = {icon : "http://www.google.com/s2/favicons?domain="+tab.url, nodeId: counter, name: "williamChops", href: tab.url, parent: (current).toString(), children: []};
             sessionStorage.setItem((current).toString(), JSON.stringify(oldNode));
             sessionStorage.setItem(counter.toString(), JSON.stringify(newNode));
-         //   console.log(sessionStorage.getItem(counter.toString()));
+            //   console.log(sessionStorage.getItem(counter.toString()));
             console.log('old node:');
             console.log(oldNode);
             current = counter;
@@ -50,7 +64,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
             var root = {icon : "http://www.google.com/s2/favicons?domain="+tab.url, nodeId: counter, name: "williamChops", href: tab.url, parent: -1, children: []};
             sessionStorage.setItem('root' + tab.id, counter);
             sessionStorage.setItem(counter.toString(), JSON.stringify(root));
-        //    console.log(sessionStorage.getItem(counter.toString()));
+            //    console.log(sessionStorage.getItem(counter.toString()));
             current = counter;
             counter++;
         }
