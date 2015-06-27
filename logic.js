@@ -227,7 +227,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .on( "click", function(e) {
               console.log($(this).attr("height"));
               console.log("Aaaaa");
-              click();
+              click(e);
             })
             .on ("mouseenter", function(){
                 $(this).attr("width", "120px");
