@@ -2,12 +2,16 @@
 //Hover shows link
 //Click link, it'll page
 //Click plus sign, it'll expand branches
+
+var activeNode = null;
+
 treeJSON = d3.json("graphData.json", function(error, treeData) {
     chrome.tabs.query({active:true,currentWindow:true},function(tabs){
         console.log(tabs[0].id);
         treeData = chrome.extension.getBackgroundPage().getTree(tabs[0].id);
         console.log("tree:");
         console.log(treeData);
+        activeNode = treeData;
         createGraph(treeData);
 
     });
@@ -214,6 +218,9 @@ function createGraph(treeData) {
             // alternatively to keep a fixed scale one can set a fixed depth per level
             // Normalize for fixed-depth by commenting out below line
             d.y = (d.depth * 150); //500px per level.
+
+            //set the current
+            if (d.active) activeNode = d;
         });
 
         // Update the nodes…
@@ -446,12 +453,12 @@ function createGraph(treeData) {
     // Append a group which holds all nodes and which the zoom Listener can act upon.
     var svgGroup = baseSvg.append("g");
 
-    // Define the root
-    root = treeData;
+    // Define the current
+    var root = treeData;
     root.x0 = viewerHeight / 2;
     root.y0 = 0;
 
     // Layout the tree initially and center on the root node.
     update(root);
-    centerNode(root);
+    centerNode(activeNode);
 }

@@ -6,7 +6,7 @@ chrome.tabs.getAllInWindow(function(tabs){
         var tab = tabs[i];
         if(!sessionStorage.getItem('root' + tab.id)) {
             console.log(tab.url, tab.id);
-            var root = {nodeId: 0, name: "williamChops", href: tab.url, parent: -1, children: []};
+            var root = {icon : "http://www.google.com/s2/favicons?domain="+tab.url, nodeId: counter, name: "williamChops", href: tab.url, parent: -1, children: []};
             sessionStorage.setItem('root' + tab.id, counter);
             sessionStorage.setItem(counter.toString(), JSON.stringify(root));
             sessionStorage.setItem('current' + tab.id, counter);
@@ -76,6 +76,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 function getTree(tabId) {
     var root = JSON.parse(sessionStorage.getItem(sessionStorage.getItem('root' + tabId)));
     var currentKey = sessionStorage.getItem('current' + tabId);
+    console.log(currentKey);
     return replaceHash(root, currentKey);
 }
 
