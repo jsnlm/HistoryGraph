@@ -239,18 +239,24 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             });
 
 
-        nodeEnter.on("mouseenter", function(){
-            console.log('set to 120px');
-            $(this).children('rect').attr("width", "120px");
+        nodeEnter
+        .on("mouseenter", function(){
+            $(this).find(".linkHyperlink").show();
+            $(this).find(".linkPicture").hide();
+            console.log('set to xxxx');
+            $(this).children('rect').attr("width", $(this).find(".linkHyperlink")[0].getComputedTextLength() + 40);
         })
-            .on ("mouseleave", function(){
+        .on ("mouseleave", function(){
+            $(this).find(".linkHyperlink").hide();
+            $(this).find(".linkPicture").show();
             console.log('set to ' + nodeDefaultWidth + 'px');
             $(this).children('rect').attr("width", nodeDefaultWidth + "px");
         });
 
         var link = nodeEnter.append("a").attr("href", function (d) {
             return d.href;
-        }).on('click', function(e) {
+        })
+        .on('click', function(e) {
             console.log(e.href);
             chrome.tabs.query({active:true,currentWindow:true},function(tabs){
                 var tab = tabs[0];
@@ -284,30 +290,34 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
                 //return 50;
             })
             .attr("y", 15)
+            .attr("class", "linkHyperlink")
             .attr("text-anchor", function(d) {
                 //return d.children || d._children ? "end" : "start";
                 return d.children || d._children ? "start" : "start";
             })
             .text(function(d) {
                 return d.name;
-            });
+            })
+            .style({"display":'none'});
 
-        link.append("text")
-            .attr("x", 2)
-            .attr("y", 10)
-            .attr("dx", ".50em")
-            .attr("dy", ".500em")
-            .attr('class', 'nodeText')
-            .attr("text-anchor", "start")
-            .text("+");
+        // link.append("text")
+        //     .attr("x", 2)
+        //     .attr("y", 10)
+        //     .attr("dx", ".50em")
+        //     .attr("dy", ".500em")
+        //     .attr('class', 'nodeText')
+        //     .attr("text-anchor", "start")
+        //     .text("+");
 
         link.append("image")
             .attr("xlink:href", "faviconExample.png")
-            .attr("x", 2)
-            .attr("y", 10)
+            .attr("x", 20)
+            .attr("y", 8)
+            .attr("height", "23px")
+            .attr("width","23px")
             .attr("dx", ".50em")
             .attr("dy", ".500em")
-            .attr('class', 'nodeText')
+            .attr('class', 'nodeText linkPicture')
             .attr("text-anchor", "start");
 
         nodeEnter.append("text")
