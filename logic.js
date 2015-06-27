@@ -4,7 +4,7 @@
 //Click plus sign, it'll expand branches
 
 treeJSON = d3.json("graphData.json", function(error, treeData) {
-    console.log(treeData);
+  //  console.log(treeData);
     // Calculate total nodes, max label length
     var totalNodes = 0;
     var nodeDefaultWidth = 55;
@@ -241,18 +241,18 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
 
 
         nodeEnter.on("mouseenter", function(){
-            console.log('set to 120px');
+     //       console.log('set to 120px');
             $(this).children('rect').attr("width", "120px");
         })
             .on ("mouseleave", function(){
-            console.log('set to ' + nodeDefaultWidth + 'px');
+    //        console.log('set to ' + nodeDefaultWidth + 'px');
             $(this).children('rect').attr("width", nodeDefaultWidth + "px");
         });
 
         var link = nodeEnter.append("a").attr("href", function (d) {
             return d.href;
         }).on('click', function(e) {
-            console.log(e.href);
+    //        console.log(e.href);
             chrome.tabs.query({active:true,currentWindow:true},function(tabs){
                 var tab = tabs[0];
                 chrome.tabs.update(tab.id, {url: e.href});
@@ -432,5 +432,5 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
 });
 
 $(function() {
-    console.log(chrome.extension.getBackgroundPage().getTree());
+  //  console.log(chrome.extension.getBackgroundPage().getTree());
 });
