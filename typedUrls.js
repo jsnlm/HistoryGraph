@@ -5,13 +5,9 @@
 // Event listener for clicks on links in a browser action popup.
 // Open the link in a new tab of the current window.
 function onAnchorClick(event) {
-  //chrome.tabs.create({
-   // selected: true,
-   // url: event.srcElement.href
-  //})
-  console.log(event.srcElement.href); 
-  chrome.tabs.getCurrent(function (tab) {
-    chrome.tabs.update(tab.id, {url: event.srcElement.href });
+  chrome.tabs.query({active:true,currentWindow:true},function(tabs){
+    var tab = tabs[0];
+    chrome.tabs.update(tab.id, {url: event.srcElement.href});
   });
   return false;
 }
