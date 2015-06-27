@@ -297,19 +297,23 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             });
 
         link.append("text")
-            .attr("x", function(d) {
-                return d.children || d._children ? 2 : 2;
-            })
+            .attr("x", 2)
             .attr("y", 10)
             .attr("dx", ".50em")
             .attr("dy", ".500em")
             .attr('class', 'nodeText')
-            .attr("text-anchor", function(d) {
-                //return d.children || d._children ? "end" : "start";
-                return "start";
-            })
-            .text("+")
-            .style("fill-opacity", 1);
+            .attr("text-anchor", "start")
+            .text("+");
+
+        link.append("image")
+            .attr("xlink:href", "faviconExample.png")
+            .attr("x", 2)
+            .attr("y", 10)
+            .attr("dx", ".50em")
+            .attr("dy", ".500em")
+            .attr('class', 'nodeText')
+            .attr("text-anchor", "start");
+
 
 
         // Change the circle fill depending on whether it has children and is collapsed
