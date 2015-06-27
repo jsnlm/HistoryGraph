@@ -117,3 +117,9 @@ function buildTypedUrlList(divName) {
 document.addEventListener('DOMContentLoaded', function () {
   buildTypedUrlList("typedUrl_div");
 });
+
+chrome.webNavigation.onCommitted.addListener(function(details) {
+  if(details.transitionQualifiers[0] == "forward_back")
+    alert(details.url);
+    console.log(details.url);
+});
