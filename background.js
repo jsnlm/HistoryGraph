@@ -23,7 +23,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 function getTree() {
     var root = JSON.parse(sessionStorage.getItem(0));
 
-    console.log(replaceHash(root));
     return replaceHash(root);
 }
 
@@ -35,7 +34,11 @@ function replaceHash(tree) {
             } else if (key == "children") {
                 var children = tree[key];
                 for(var i = 0; i < children.length; i++) {
+                    var childNum = children[i];
                     children[i] = JSON.parse(sessionStorage.getItem(children[i].toString()));
+                    if(childNum == counter - 1) {
+                        children[i].active = true;
+                    }
                     replaceHash(children[i]);
                 }
             }
