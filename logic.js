@@ -381,3 +381,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
     update(root);
     centerNode(root);
 });
+
+$(function() {
+    console.log(chrome.extension.getBackgroundPage().getTree());
+});
