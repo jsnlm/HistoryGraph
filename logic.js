@@ -1,6 +1,7 @@
 // Get JSON data
 //Hover shows link
-//Click 
+//Click link, it'll page
+//Click plus sign, it'll expand branches
 treeJSON = d3.json("graphData.json", function(error, treeData) {
 
     // Calculate total nodes, max label length
@@ -126,14 +127,10 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
     }
 
     var overCircle = function(d) {
-        alert("afefe");
-        console.log("Acefegeg");
         selectedNode = d;
         updateTempConnector();
     };
     var outCircle = function(d) {
-        alert("afefe");
-        console.log("Acefegeg");
         selectedNode = null;
         updateTempConnector();
     };
@@ -212,19 +209,35 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
         //     .style("fill", function(d) {
         //         return d._children ? "lightsteelblue" : "#fff";
         //     });
-            nodeEnter.append("rect")
+        nodeEnter.append("rect")
             .attr('class', 'nodeCircle')
             .attr("r", 0)
             .attr("rx", 4)
             .attr("ry", 4)
             .attr("aeuf", 248)
             .attr("width",40)
-            .attr("height",20)
+            .attr("height",25)
             .attr("aeuf", 248)
             .style({"fill":'red',"stroke":"black","stroke-width":"2","opacity":'1'})
             .style("fill", function(d) {
                 return d._children ? "lightsteelblue" : "#fff";
-        });
+            })
+            .on( "click", function(e) {
+              console.log($(this).attr("height"));
+              console.log("Aaaaa");
+              $(this).attr("width", "100px");
+            })
+                // .hover(function(e) {
+                //   console.log($(this).attr("height"));
+                //   console.log("Bbbbb");
+                // }
+                
+            //onhover(function() {
+              // console.log($(this).attr("height"));
+              // console.log("Bbbbb");
+            //}
+            ;
+            
 
         nodeEnter.append("text")
             .attr("x", function(d) {
@@ -271,13 +284,15 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .attr("r", 4.5)
             .style("fill", function(d) {
                 return d._children ? "lightsteelblue" : "#fff";
-            });
+            })
+            
+            ;
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
             .duration(duration)
             .attr("transform", function(d) {
-                return "translate(" + d.y + "," + (d.x-8) + ")";
+                return "translate(" + d.y + "," + (d.x-10) + ")";
             });
 
         // Fade the text in
