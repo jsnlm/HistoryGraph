@@ -3,7 +3,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
 
     // Calculate total nodes, max label length
     var totalNodes = 0;
-    var maxLabelLength = 0;
+    var maxLabelLength = 0; 
     // variables for drag/drop
     var selectedNode = null;
     var draggingNode = null;
