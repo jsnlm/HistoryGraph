@@ -273,6 +273,7 @@ function createGraph(treeData) {
                 var tab = tabs[0];
                 chrome.extension.getBackgroundPage().navigatePage(tab.id, e.nodeId);
                 chrome.tabs.update(tab.id, {url: e.href});
+                window.close();
             });
         });
 
@@ -308,7 +309,7 @@ function createGraph(treeData) {
                 return d.children || d._children ? "start" : "start";
             })
             .text(function(d) {
-                return d.name;
+                return d.href;
             })
             .style({"display":'none'});
 

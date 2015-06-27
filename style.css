@@ -17,6 +17,10 @@
     font-family:sans-serif;
   }
 
+  .node a:hover {
+      text-decoration:underline;
+  }
+
   .nodeMinus {
       font-size:30px !important;
       fill: red;

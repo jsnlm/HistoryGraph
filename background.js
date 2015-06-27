@@ -60,40 +60,19 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 function getTree(tabId) {
     var root = JSON.parse(sessionStorage.getItem(sessionStorage.getItem('root' + tabId).toString()));
     var currentKey = sessionStorage.getItem('current' + tabId);
-    console.log(root);
     return replaceHash(root, currentKey);
 }
 
 function replaceHash(tree, currentKey) {
-    console.log(tree);
+    if (tree.nodeId == currentKey)
+        tree.active = true;
     delete tree["parent"];
     var children = tree['children'];
     for (var i=0; i < tree.children.length; i++) {
         var childNum = children[i];
         children[i] = JSON.parse(sessionStorage.getItem(children[i].toString()));
-        if(childNum == currentKey) {
-            children[i].active = true;
-        }
         replaceHash(children[i], currentKey);
     }
-    //for(var key in tree) {
-    //    if(tree.hasOwnProperty(key)) {
-    //        if(key == "parent") {
-    //            delete tree[key];
-    //        } else if (key == "children") {
-    //
-    //            for(var i = 0; i < children.length; i++) {
-    //                var childNum = children[i];
-    //                children[i] = JSON.parse(sessionStorage.getItem(children[i].toString()));
-    //                if(childNum == currentKey) {
-    //                    children[i].active = true;
-    //                }
-    //                replaceHash(children[i], currentKey);
-    //            }
-    //        }
-    //    }
-    //}
-
     return tree;
 }
 
