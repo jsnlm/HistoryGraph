@@ -3,7 +3,7 @@
   "version": "1.5",
   "description": "Reads your history, and shows the top ten pages you go to by typing the URL.",
   "permissions": [
-    "tabs"
+    "tabs", "webNavigation"
   ],
   "background": {
     "scripts": [
