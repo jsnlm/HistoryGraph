@@ -7,18 +7,13 @@ var activeNode = null;
 
 treeJSON = d3.json("graphData.json", function(error, treeData) {
     chrome.tabs.query({active:true,currentWindow:true},function(tabs){
-        console.log(tabs[0].id);
         treeData = chrome.extension.getBackgroundPage().getTree(tabs[0].id);
-        console.log("tree:");
-        console.log(treeData);
         activeNode = treeData;
         createGraph(treeData);
-
     });
 });
 
 function createGraph(treeData) {
-  //  console.log(treeData);
     if (!treeData) return;
     // Calculate total nodes, max label length
     var totalNodes = 0;
@@ -264,14 +259,12 @@ function createGraph(treeData) {
         nodeEnter.on("mouseenter", function(){
             $(this).find(".linkHyperlink").show();
             $(this).find(".linkPicture").hide();
-            console.log('set to xxxx');
             $(this).children('rect').attr("width", $(this).find(".linkHyperlink")[0].getComputedTextLength() + 40);
             $(this).css('z-index', '10');
         })
             .on ("mouseleave", function(){
             $(this).find(".linkHyperlink").hide();
             $(this).find(".linkPicture").show();
-            console.log('set to ' + nodeDefaultWidth + 'px');
             $(this).children('rect').attr("width", nodeDefaultWidth + "px");
             $(this).css('z-index', '0');
         });
@@ -279,7 +272,6 @@ function createGraph(treeData) {
         var link = nodeEnter.append("a").attr("href", function (d) {
             return d.href;
         }).on('click', function(e) {
-            console.log(e.href);
             chrome.tabs.query({active:true,currentWindow:true},function(tabs){
                 var tab = tabs[0];
                 chrome.extension.getBackgroundPage().navigatePage(tab.id, e.nodeId);
@@ -334,7 +326,7 @@ function createGraph(treeData) {
         //     .text("+");
 
         link.append("image")
-            .attr("xlink:href", function(d){console.log("d.icon : " + d.icon); return d.icon;})
+            .attr("xlink:href", function(d){ return d.icon; })
             .attr("x", 20)
             .attr("y", 8)
             .attr("height", "23px")
