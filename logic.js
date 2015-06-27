@@ -6,7 +6,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
 
     // Calculate total nodes, max label length
     var totalNodes = 0;
-    var nodeDefaultWidth = 40;
+    var nodeDefaultWidth = 55;
     var maxLabelLength = 0;
     // panning variables
     var panSpeed = 200;
@@ -136,6 +136,19 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
         updateTempConnector();
     };
 
+    function centerNode(source) {
+        scale = zoomListener.scale();
+        x = -source.y0;
+        y = -source.x0;
+        x = x * scale + viewerWidth / 2;
+        y = y * scale + viewerHeight / 2;
+        d3.select('g').transition()
+            .duration(duration)
+            .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
+        zoomListener.scale(scale);
+        zoomListener.translate([x, y]);
+    }
+
     // Toggle children function
 
     function toggleChildren(d) {
@@ -176,7 +189,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             }
         };
         childCount(0, root);
-        var newHeight = d3.max(levelWidth) * 50; // 25 pixels per line
+        var newHeight = d3.max(levelWidth) * 70; // 25 pixels per line
         tree = tree.size([newHeight, viewerWidth]);
 
         // Compute the new tree layout.
@@ -218,17 +231,13 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .attr("ry", 4)
             .attr("aeuf", 248)
             .attr("width",nodeDefaultWidth)
-            .attr("height",25)
+            .attr("height",40)
             .attr("aeuf", 248)
             .style({"fill":'red',"stroke":"black","stroke-width":"2","opacity":'1'})
             .style("fill", function(d) {
-                return d._children ? "lightsteelblue" : "#fff";
-            })
-            .on( "click", function(e) {
-              console.log($(this).attr("height"));
-              console.log("Aaaaa");
-              click(e);
+                return d._children ? "lightblue" : "#fff";
             });
+
 
         nodeEnter.on("mouseenter", function(){
             console.log('set to 120px');
@@ -256,7 +265,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             })
             //.attr("dy", ".35em")
             .attr("dx", ".50em")
-            .attr("dy", ".500em")
+            .attr("dy", ".550em")
             .attr('class', 'nodeText')
             .attr("text-anchor", function(d) {
                 return d.children || d._children ? "end" : "start";
@@ -267,19 +276,6 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .style("fill-opacity", 0);
 
 
-        // phantom node to give us mouseover in a radius around it
-        nodeEnter.append("circle")
-            .attr('class', 'ghostCircle')
-            .attr("r", 30)
-            .attr("opacity", 0.2) // change this to zero to hide the target area
-        .style("fill", "red")
-            .attr('pointer-events', 'mouseover')
-            .on("mouseover", function(node) {
-                overCircle(node);
-            })
-            .on("mouseout", function(node) {
-                outCircle(node);
-            });
 
         // Update the text to reflect whether node has children or not.
         node.select('text')
@@ -287,7 +283,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
                 return d.children || d._children ? 12 : 12;
                 //return 50;
             })
-            .attr("y", 10)
+            .attr("y", 15)
             .attr("text-anchor", function(d) {
                 //return d.children || d._children ? "end" : "start";
                 return d.children || d._children ? "start" : "start";
@@ -314,13 +310,37 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .attr('class', 'nodeText')
             .attr("text-anchor", "start");
 
+        nodeEnter.append("text")
+            .attr("x", function(d) {
+                return d.children || d._children ? 2 : 2;
+            })
+            .attr("y", 10)
+            .attr("dx", "0em")
+            .attr("dy", ".623em")
+            .attr('class', 'nodeMinus')
+            .attr("text-anchor", function(d) {
+                //return d.children || d._children ? "end" : "start";
+                return "start";
+            })
+            .text("-")
+            .style("fill-opacity", 1)
+            .on( "click", function (d) {
+                if (d.children) {
+                    $(this).text('+');
+                    $(this).css('fill','green');
+                } else {
+                    $(this).text('-');
+                    $(this).removeAttr('style');
+                }
+                click(d);
+            });
 
 
         // Change the circle fill depending on whether it has children and is collapsed
-        node.select("circle.nodeCircle")
+        node.select("rect.nodeCircle")
             .attr("r", 4.5)
             .style("fill", function(d) {
-                return d._children ? "lightsteelblue" : "#fff";
+                return d._children ? "lightblue" : "#fff";
             })
             
             ;
@@ -329,7 +349,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
         var nodeUpdate = node.transition()
             .duration(duration)
             .attr("transform", function(d) {
-                return "translate(" + d.y + "," + (d.x-10) + ")";
+                return "translate(" + d.y + "," + (d.x-20) + ")";
             });
 
         // Fade the text in
@@ -408,4 +428,8 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
     // Layout the tree initially and center on the root node.
     update(root);
     centerNode(root);
+});
+
+$(function() {
+    console.log(chrome.extension.getBackgroundPage().getTree());
 });
