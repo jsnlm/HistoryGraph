@@ -9,7 +9,8 @@
     {
       "matches": ["<all_urls>"],
       "js": ["jquery-1.11.1.min.js", "logic.js"],
-      "run_at:": "document_start"
+      "run_at:": "document_start",
+      "all_frames": true
     }
   ],
   "browser_action": {

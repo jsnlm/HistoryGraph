@@ -1,12 +1,8 @@
-$(function() {
-	alert('ccc');
+$(function () {
+	var hist = window.history;
+	$('#testBack').click(function () {
+		debugger;
+		var url = hist.back();
+		alert(url);
+	});
 });
-
-$('#testBack').click(function () {
-	alert('aaa');
-
-});
-
-function test() {
-	alert('bbb');
-}
