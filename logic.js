@@ -178,7 +178,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             }
         };
         childCount(0, root);
-        var newHeight = d3.max(levelWidth) * 25; // 25 pixels per line  
+        var newHeight = d3.max(levelWidth) * 50; // 25 pixels per line
         tree = tree.size([newHeight, viewerWidth]);
 
         // Compute the new tree layout.
@@ -187,10 +187,10 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
 
         // Set widths between levels based on maxLabelLength.
         nodes.forEach(function(d) {
-            d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
+       //     d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
             // alternatively to keep a fixed scale one can set a fixed depth per level
             // Normalize for fixed-depth by commenting out below line
-            // d.y = (d.depth * 500); //500px per level.
+             d.y = (d.depth * 150); //500px per level.
         });
 
         // Update the nodes…
@@ -222,7 +222,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .attr("ry", 4)
             .attr("aeuf", 248)
             .attr("width",40)
-            .attr("height",20)
+            .attr("height",25)
             .attr("aeuf", 248)
             .style({"fill":'red',"stroke":"black","stroke-width":"2","opacity":'1'})
             .style("fill", function(d) {

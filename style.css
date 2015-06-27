@@ -38,13 +38,14 @@
   }
 
   body {
-    width:266px;
-    height:293px;
+    width:500px;
+    height:520px;
     margin:0;
     background-color:#eee;
   }
 
   h2 {
     border-bottom: solid 3px grey;
-    margin-bottom:0;
+    margin:0;
+      font-size:20px;
   }
