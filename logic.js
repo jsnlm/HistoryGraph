@@ -232,11 +232,16 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .attr("aeuf", 248)
             .attr("width",nodeDefaultWidth)
             .attr("height",40)
-            .attr("aeuf", 248)
-            .style({"fill":'red',"stroke":"black","stroke-width":"2","opacity":'1'})
-            .style("fill", function(d) {
-                return d._children ? "lightblue" : "#fff";
-            });
+            // .style({"stroke":"black","stroke-width":"2","opacity":'1'})
+            // .style("fill", function(d) {
+            //     return d._children ? "lightblue" : "#fff";
+            // })
+            .style(
+                {"stroke":function(d){return d.active ? "#A33" : "black";},
+                "stroke-width":function(d){return d.active ? "4" : "2";},
+                "fill":function(d){return d.active ? "rgb(255, 155, 155)" : "#fff";},
+                "opacity":'1'}
+                )
 
 
         nodeEnter
@@ -349,10 +354,9 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
         // Change the circle fill depending on whether it has children and is collapsed
         node.select("rect.nodeCircle")
             .attr("r", 4.5)
-            .style("fill", function(d) {
-                return d._children ? "lightblue" : "#fff";
-            })
-            
+            // .style("fill", function(d) {
+            //     return d._children ? "rgb(255, 155, 155)" : "#fff";
+            // })
             ;
 
         // Transition nodes to their new position.
