@@ -293,6 +293,24 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
                 return d.name;
             });
 
+        link.append("text")
+            .attr("x", 2)
+            .attr("y", 10)
+            .attr("dx", ".50em")
+            .attr("dy", ".500em")
+            .attr('class', 'nodeText')
+            .attr("text-anchor", "start")
+            .text("+");
+
+        link.append("image")
+            .attr("xlink:href", "faviconExample.png")
+            .attr("x", 2)
+            .attr("y", 10)
+            .attr("dx", ".50em")
+            .attr("dy", ".500em")
+            .attr('class', 'nodeText')
+            .attr("text-anchor", "start");
+
         nodeEnter.append("text")
             .attr("x", function(d) {
                 return d.children || d._children ? 2 : 2;
