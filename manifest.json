@@ -3,12 +3,13 @@
   "version": "1.2",
   "description": "Reads your history, and shows the top ten pages you go to by typing the URL.",
   "permissions": [
-    "history"
+    "history", "tabs"
   ],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["jquery-1.11.1.min.js", "logic.js"]
+      "js": ["jquery-1.11.1.min.js", "logic.js"],
+      "run_at": "document_end"
     }
   ],
   "browser_action": {
