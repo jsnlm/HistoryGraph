@@ -6,6 +6,12 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         shouldUpdate = true;
         return;
     }
+    console.log("tab.favIconUrl : " + tab.favIconUrl);
+    var favIconUrl = "";
+    if (tab.favIconUrl) favIconUrl = tab.favIconUrl;
+    else if (changeInfo.favIconUrl) favIconUrl = changeInfo.favIconUrl;
+
+
     var current = 0;
     if(changeInfo && changeInfo.url) {
         console.log('tabId: ' + tab.id);
@@ -36,7 +42,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
             }
 
             oldNode.children.push(counter.toString());
-            var newNode = {nodeId: counter, name: "williamChops", href: tab.url, parent: (current).toString(), children: []};
+            var newNode = {icon : favIconUrl, nodeId: counter, name: "williamChops", href: tab.url, parent: (current).toString(), children: []};
             sessionStorage.setItem((current).toString(), JSON.stringify(oldNode));
             sessionStorage.setItem(counter.toString(), JSON.stringify(newNode));
          //   console.log(sessionStorage.getItem(counter.toString()));
@@ -45,7 +51,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
             current = counter;
             counter++;
         } else {
-            var root = {nodeId: counter, name: "williamChops", href: tab.url, parent: -1, children: []};
+            var root = {icon : favIconUrl, nodeId: counter, name: "williamChops", href: tab.url, parent: -1, children: []};
             sessionStorage.setItem('root' + tab.id, counter);
             sessionStorage.setItem(counter.toString(), JSON.stringify(root));
         //    console.log(sessionStorage.getItem(counter.toString()));

@@ -6,6 +6,8 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
     chrome.tabs.query({active:true,currentWindow:true},function(tabs){
         console.log(tabs[0].id);
         treeData = chrome.extension.getBackgroundPage().getTree(tabs[0].id);
+        console.log("tree:");
+        console.log(treeData);
         createGraph(treeData);
 
     });
@@ -323,7 +325,7 @@ function createGraph(treeData) {
         //     .text("+");
 
         link.append("image")
-            .attr("xlink:href", "faviconExample.png")
+            .attr("xlink:href", function(d){console.log("d.icon : " + d.icon); return d.icon;})
             .attr("x", 20)
             .attr("y", 8)
             .attr("height", "23px")
