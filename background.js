@@ -1,10 +1,14 @@
 var counter = 0;
+var shouldUpdate = true;
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
-//    console.log(changeInfo);
-  //  console.log(tab);
+    if (!shouldUpdate) {
+        shouldUpdate = true;
+        return;
+    }
     var current = 0;
     if(changeInfo && changeInfo.url) {
+        console.log('tabId: ' + tab.id);
         if(sessionStorage.getItem('root' + tab.id)) {
             current = sessionStorage.getItem('current' + tab.id);
             console.log('first current ' + current);
@@ -32,15 +36,17 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
             }
 
             oldNode.children.push(counter.toString());
-            var newNode = {name: "williamChops", href: tab.url, parent: (current).toString(), children: []};
+            var newNode = {nodeId: counter, name: "williamChops", href: tab.url, parent: (current).toString(), children: []};
             sessionStorage.setItem((current).toString(), JSON.stringify(oldNode));
             sessionStorage.setItem(counter.toString(), JSON.stringify(newNode));
          //   console.log(sessionStorage.getItem(counter.toString()));
+            console.log('old node:');
+            console.log(oldNode);
             current = counter;
             counter++;
         } else {
-            var root = {name: "williamChops", href: tab.url, parent: -1, children: []};
-            sessionStorage.setItem('root' + tab.id, JSON.stringify(root));
+            var root = {nodeId: counter, name: "williamChops", href: tab.url, parent: -1, children: []};
+            sessionStorage.setItem('root' + tab.id, counter);
             sessionStorage.setItem(counter.toString(), JSON.stringify(root));
         //    console.log(sessionStorage.getItem(counter.toString()));
             current = counter;
@@ -51,32 +57,49 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     }
 });
 
-function getTree() {
-    var root = JSON.parse(sessionStorage.getItem(0));
-
-    return replaceHash(root);
+function getTree(tabId) {
+    var root = JSON.parse(sessionStorage.getItem(sessionStorage.getItem('root' + tabId).toString()));
+    var currentKey = sessionStorage.getItem('current' + tabId);
+    console.log(root);
+    return replaceHash(root, currentKey);
 }
 
-function replaceHash(tree) {
-    for(var key in tree) {
-        if(tree.hasOwnProperty(key)) {
-            if(key == "parent") {
-                delete tree[key];
-            } else if (key == "children") {
-                var children = tree[key];
-                for(var i = 0; i < children.length; i++) {
-                    var childNum = children[i];
-                    children[i] = JSON.parse(sessionStorage.getItem(children[i].toString()));
-                    if(childNum == counter - 1) {
-                        children[i].active = true;
-                    }
-                    replaceHash(children[i]);
-                }
-            }
+function replaceHash(tree, currentKey) {
+    console.log(tree);
+    delete tree["parent"];
+    var children = tree['children'];
+    for (var i=0; i < tree.children.length; i++) {
+        var childNum = children[i];
+        children[i] = JSON.parse(sessionStorage.getItem(children[i].toString()));
+        if(childNum == currentKey) {
+            children[i].active = true;
         }
+        replaceHash(children[i], currentKey);
     }
+    //for(var key in tree) {
+    //    if(tree.hasOwnProperty(key)) {
+    //        if(key == "parent") {
+    //            delete tree[key];
+    //        } else if (key == "children") {
+    //
+    //            for(var i = 0; i < children.length; i++) {
+    //                var childNum = children[i];
+    //                children[i] = JSON.parse(sessionStorage.getItem(children[i].toString()));
+    //                if(childNum == currentKey) {
+    //                    children[i].active = true;
+    //                }
+    //                replaceHash(children[i], currentKey);
+    //            }
+    //        }
+    //    }
+    //}
 
     return tree;
+}
+
+function navigatePage(tabId, id) {
+    sessionStorage.setItem('current' + tabId, id);
+    shouldUpdate = false;
 }
 
 //// Todo: Need to change to graph when user moves back or forward

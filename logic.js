@@ -3,8 +3,17 @@
 //Click link, it'll page
 //Click plus sign, it'll expand branches
 treeJSON = d3.json("graphData.json", function(error, treeData) {
-    treeData = chrome.extension.getBackgroundPage().getTree();
+    chrome.tabs.query({active:true,currentWindow:true},function(tabs){
+        console.log(tabs[0].id);
+        treeData = chrome.extension.getBackgroundPage().getTree(tabs[0].id);
+        createGraph(treeData);
+
+    });
+});
+
+function createGraph(treeData) {
   //  console.log(treeData);
+    if (!treeData) return;
     // Calculate total nodes, max label length
     var totalNodes = 0;
     var nodeDefaultWidth = 55;
@@ -199,10 +208,10 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
 
         // Set widths between levels based on maxLabelLength.
         nodes.forEach(function(d) {
-       //     d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
+            //     d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
             // alternatively to keep a fixed scale one can set a fixed depth per level
             // Normalize for fixed-depth by commenting out below line
-             d.y = (d.depth * 150); //500px per level.
+            d.y = (d.depth * 150); //500px per level.
         });
 
         // Update the nodes…
@@ -249,7 +258,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             console.log('set to xxxx');
             $(this).children('rect').attr("width", $(this).find(".linkHyperlink")[0].getComputedTextLength() + 40);
         })
-        .on ("mouseleave", function(){
+            .on ("mouseleave", function(){
             $(this).find(".linkHyperlink").hide();
             $(this).find(".linkPicture").show();
             console.log('set to ' + nodeDefaultWidth + 'px');
@@ -262,6 +271,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             console.log(e.href);
             chrome.tabs.query({active:true,currentWindow:true},function(tabs){
                 var tab = tabs[0];
+                chrome.extension.getBackgroundPage().navigatePage(tab.id, e.nodeId);
                 chrome.tabs.update(tab.id, {url: e.href});
             });
         });
@@ -354,7 +364,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             // .style("fill", function(d) {
             //     return d._children ? "rgb(255, 155, 155)" : "#fff";
             // })
-            ;
+        ;
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
@@ -439,7 +449,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
     // Layout the tree initially and center on the root node.
     update(root);
     centerNode(root);
-});
+}
 
 $(function() {
   //  console.log(chrome.extension.getBackgroundPage().getTree());
