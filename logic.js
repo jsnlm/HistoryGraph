@@ -204,10 +204,8 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .attr("class", "node")
             .attr("transform", function(d) {
                 return "translate(" + source.y0 + "," + source.x0 + ")";
-            }).attr("href", function (d) {
-                return d.href;
-            })
-            .on('click', click);
+            });
+
 
         // nodeEnter.append("circle")
         //     .attr('class', 'nodeCircle')
@@ -227,9 +225,19 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .style({"fill":'red',"stroke":"black","stroke-width":"2","opacity":'1'})
             .style("fill", function(d) {
                 return d._children ? "lightsteelblue" : "#fff";
+        }).on('click', click);
+
+        var link = nodeEnter.append("a").attr("href", function (d) {
+            return d.href;
+        }).on('click', function(e) {
+            console.log(e.href);
+            chrome.tabs.query({active:true,currentWindow:true},function(tabs){
+                var tab = tabs[0];
+                chrome.tabs.update(tab.id, {url: e.href});
+            });
         });
 
-        nodeEnter.append("text")
+        link.append("text")
             .attr("x", function(d) {
                 return d.children || d._children ? -10 : 10;
             })
@@ -242,6 +250,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
                 return d.name;
             })
             .style("fill-opacity", 0);
+
 
         // phantom node to give us mouseover in a radius around it
         nodeEnter.append("circle")
@@ -280,7 +289,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
         var nodeUpdate = node.transition()
             .duration(duration)
             .attr("transform", function(d) {
-                return "translate(" + d.y + "," + (d.x-8) + ")";
+                return "translate(" + d.y + "," + (d.x-13) + ")";
             });
 
         // Fade the text in

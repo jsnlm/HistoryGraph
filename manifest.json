@@ -9,5 +9,11 @@
     "default_popup": "GraphView.html",
     "default_icon": "icon.png"
   },
+  "icons":
+  {
+    "128":"icon128.png",
+    "64":"icon.png",
+    "32":"icon32.png"
+  },
   "manifest_version": 2
 }

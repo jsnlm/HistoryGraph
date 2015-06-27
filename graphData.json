@@ -1,63 +1,63 @@
 {
     "name": "analytics",
-    "href": "google.ca",
+    "href": "https://www.google.ca",
     "children": [
         {
             "name": "cluster",
-            "href": "google.ca",
+            "href": "https://www.google.ca",
             "children": [
                 {
                     "name": "AgglomerativeCluster",
-                    "href": "google.ca",
+                    "href": "https://www.google.ca",
                     "children":[]
                 },
                 {
                     "name": "CommunityStructure",
-                    "href": "google.ca"
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "HierarchicalCluster",
-                    "href": "google.ca"
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "MergeEdge",
-                    "href": "google.ca"
+                    "href": "https://www.google.ca"
                 }
             ]
         },
         {
             "name": "graph",
-            "href": "google.ca",
+            "href": "https://www.google.ca",
             "children": [
                 {
                     "name": "BetweennessCentrality",
-                    "href": "google.ca"
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "LinkDistance",
-                    "href": "google.ca"
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "MaxFlowMinCut",
-                    "href": "google.ca"
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "ShortestPaths",
-                    "href": "google.ca"
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "SpanningTree",
-                    "href": "google.ca"
+                    "href": "https://www.google.ca"
                 }
             ]
         },
         {
             "name": "optimization",
-            "href": "google.ca",
+            "href": "https://www.google.ca",
             "children": [
                 {
                     "name": "AspectRatioBanker",
-                    "href": "google.ca"
+                    "href": "https://www.google.ca"
                 }
             ]
         }
