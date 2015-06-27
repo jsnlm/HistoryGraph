@@ -5,8 +5,9 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   //  console.log(tab);
     var current = 0;
     if(changeInfo && changeInfo.url) {
-        if(sessionStorage.getItem('root')) {
-            current = sessionStorage.getItem('current');
+        if(sessionStorage.getItem('root' + tab.id)) {
+            current = sessionStorage.getItem('current' + tab.id);
+            console.log('first current ' + current);
             var oldNode = JSON.parse(sessionStorage.getItem(current.toString()));
             var parentNode = JSON.parse(sessionStorage.getItem((oldNode.parent).toString()));
             console.log(changeInfo.url);
@@ -15,16 +16,16 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
             console.log(parentNode.href);
             if (parentNode && parentNode.href == tab.url) {
                 current = oldNode.parent;
-                console.log(current);
-                sessionStorage.setItem('current', current);
+                console.log('second current ' + current);
+                sessionStorage.setItem('current' + tab.id, current);
                 return;
             } else {
                 for (var i=0; i < oldNode.children.length; i++) {
                     var childNode = JSON.parse(sessionStorage.getItem(oldNode.children[i].toString()));
                     if (childNode.href == tab.url) {
                         current = oldNode.children[i];
-                        console.log(current);
-                        sessionStorage.setItem('current', current);
+                        console.log('second current ' + current);
+                        sessionStorage.setItem('current' + tab.id, current);
                         return;
                     }
                 }
@@ -39,14 +40,14 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
             counter++;
         } else {
             var root = {name: "williamChops", href: tab.url, parent: -1, children: []};
-            sessionStorage.setItem('root', JSON.stringify(root));
+            sessionStorage.setItem('root' + tab.id, JSON.stringify(root));
             sessionStorage.setItem(counter.toString(), JSON.stringify(root));
         //    console.log(sessionStorage.getItem(counter.toString()));
             current = counter;
             counter++;
         }
-        console.log(current);
-        sessionStorage.setItem('current', current);
+        console.log('second current ' + current);
+        sessionStorage.setItem('current' + tab.id, current);
     }
 });
 
@@ -88,6 +89,5 @@ function replaceHash(tree) {
 //});
 
 /* Todo: concurrency problem with forward/back button and regular page clicks
-            session storage is persisting thru multiple tabs (or my code is bad)
             modify history to conform with our graph navigation
  */
