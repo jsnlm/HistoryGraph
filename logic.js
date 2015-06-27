@@ -6,6 +6,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
 
     // Calculate total nodes, max label length
     var totalNodes = 0;
+    var nodeDefaultWidth = 40;
     var maxLabelLength = 0;
     // panning variables
     var panSpeed = 200;
@@ -151,6 +152,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
     // Toggle children on click.
 
     function click(d) {
+
         if (d3.event.defaultPrevented) return; // click suppressed
         d = toggleChildren(d);
         update(d);
@@ -174,7 +176,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             }
         };
         childCount(0, root);
-        var newHeight = d3.max(levelWidth) * 25; // 25 pixels per line  
+        var newHeight = d3.max(levelWidth) * 50; // 25 pixels per line
         tree = tree.size([newHeight, viewerWidth]);
 
         // Compute the new tree layout.
@@ -183,10 +185,10 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
 
         // Set widths between levels based on maxLabelLength.
         nodes.forEach(function(d) {
-            d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
+       //     d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
             // alternatively to keep a fixed scale one can set a fixed depth per level
             // Normalize for fixed-depth by commenting out below line
-            // d.y = (d.depth * 500); //500px per level.
+             d.y = (d.depth * 150); //500px per level.
         });
 
         // Update the nodes…
@@ -200,8 +202,8 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .attr("class", "node")
             .attr("transform", function(d) {
                 return "translate(" + source.y0 + "," + source.x0 + ")";
-            })
-            .on('click', click);
+            });
+
 
         // nodeEnter.append("circle")
         //     .attr('class', 'nodeCircle')
@@ -215,7 +217,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .attr("rx", 4)
             .attr("ry", 4)
             .attr("aeuf", 248)
-            .attr("width",40)
+            .attr("width",nodeDefaultWidth)
             .attr("height",25)
             .attr("aeuf", 248)
             .style({"fill":'red',"stroke":"black","stroke-width":"2","opacity":'1'})
@@ -225,7 +227,13 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .on( "click", function(e) {
               console.log($(this).attr("height"));
               console.log("Aaaaa");
-              $(this).attr("width", "100px");
+              click();
+            })
+            .on ("mouseenter", function(){
+                $(this).attr("width", "120px");
+            })
+            .on ("mouseleave", function(){
+                $(this).attr("width", nodeDefaultWidth + "px");
             })
                 // .hover(function(e) {
                 //   console.log($(this).attr("height"));
@@ -237,9 +245,18 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
               // console.log("Bbbbb");
             //}
             ;
-            
 
-        nodeEnter.append("text")
+        var link = nodeEnter.append("a").attr("href", function (d) {
+            return d.href;
+        }).on('click', function(e) {
+            console.log(e.href);
+            chrome.tabs.query({active:true,currentWindow:true},function(tabs){
+                var tab = tabs[0];
+                chrome.tabs.update(tab.id, {url: e.href});
+            });
+        });
+
+        link.append("text")
             .attr("x", function(d) {
                 return d.children || d._children ? -10 : 10;
             })
@@ -252,6 +269,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
                 return d.name;
             })
             .style("fill-opacity", 0);
+
 
         // phantom node to give us mouseover in a radius around it
         nodeEnter.append("circle")

@@ -1,58 +1,63 @@
 {
     "name": "analytics",
+    "href": "https://www.google.ca",
     "children": [
         {
             "name": "cluster",
+            "href": "https://www.google.ca",
             "children": [
                 {
                     "name": "AgglomerativeCluster",
-                    "size": 1
+                    "href": "https://www.google.ca",
+                    "children":[]
                 },
                 {
                     "name": "CommunityStructure",
-                    "size": 1
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "HierarchicalCluster",
-                    "size": 1
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "MergeEdge",
-                    "size": 1
+                    "href": "https://www.google.ca"
                 }
             ]
         },
         {
             "name": "graph",
+            "href": "https://www.google.ca",
             "children": [
                 {
                     "name": "BetweennessCentrality",
-                    "size": 1
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "LinkDistance",
-                    "size": 1
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "MaxFlowMinCut",
-                    "size": 1
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "ShortestPaths",
-                    "size": 1
+                    "href": "https://www.google.ca"
                 },
                 {
                     "name": "SpanningTree",
-                    "size": 1
+                    "href": "https://www.google.ca"
                 }
             ]
         },
         {
             "name": "optimization",
+            "href": "https://www.google.ca",
             "children": [
                 {
                     "name": "AspectRatioBanker",
-                    "size": 1
+                    "href": "https://www.google.ca"
                 }
             ]
         }
