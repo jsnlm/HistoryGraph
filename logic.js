@@ -1,8 +1,12 @@
 // Get JSON data
+//Hover shows link
+//Click link, it'll page
+//Click plus sign, it'll expand branches
 treeJSON = d3.json("graphData.json", function(error, treeData) {
 
     // Calculate total nodes, max label length
     var totalNodes = 0;
+    var nodeDefaultWidth = 55;
     var maxLabelLength = 0;
     // panning variables
     var panSpeed = 200;
@@ -132,36 +136,6 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
         updateTempConnector();
     };
 
-    // Function to update the temporary connector indicating dragging affiliation
-    var updateTempConnector = function() {
-        var data = [];
-        if (draggingNode !== null && selectedNode !== null) {
-            // have to flip the source coordinates since we did this for the existing connectors on the original tree
-            data = [{
-                source: {
-                    x: selectedNode.y0,
-                    y: selectedNode.x0
-                },
-                target: {
-                    x: draggingNode.y0,
-                    y: draggingNode.x0
-                }
-            }];
-        }
-        var link = svgGroup.selectAll(".templink").data(data);
-
-        link.enter().append("path")
-            .attr("class", "templink")
-            .attr("d", d3.svg.diagonal())
-            .attr('pointer-events', 'none');
-
-        link.attr("d", d3.svg.diagonal());
-
-        link.exit().remove();
-    };
-
-    // Function to center node when clicked/dropped so node doesn't get lost when collapsing/moving with large amount of children.
-
     function centerNode(source) {
         scale = zoomListener.scale();
         x = -source.y0;
@@ -191,6 +165,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
     // Toggle children on click.
 
     function click(d) {
+
         if (d3.event.defaultPrevented) return; // click suppressed
         d = toggleChildren(d);
         update(d);
@@ -214,7 +189,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             }
         };
         childCount(0, root);
-        var newHeight = d3.max(levelWidth) * 25; // 25 pixels per line  
+        var newHeight = d3.max(levelWidth) * 70; // 25 pixels per line
         tree = tree.size([newHeight, viewerWidth]);
 
         // Compute the new tree layout.
@@ -223,10 +198,10 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
 
         // Set widths between levels based on maxLabelLength.
         nodes.forEach(function(d) {
-            d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
+       //     d.y = (d.depth * (maxLabelLength * 10)); //maxLabelLength * 10px
             // alternatively to keep a fixed scale one can set a fixed depth per level
             // Normalize for fixed-depth by commenting out below line
-            // d.y = (d.depth * 500); //500px per level.
+             d.y = (d.depth * 150); //500px per level.
         });
 
         // Update the nodes…
@@ -240,21 +215,57 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .attr("class", "node")
             .attr("transform", function(d) {
                 return "translate(" + source.y0 + "," + source.x0 + ")";
-            })
-            .on('click', click);
-
-        nodeEnter.append("circle")
-            .attr('class', 'nodeCircle')
-            .attr("r", 0)
-            .style("fill", function(d) {
-                return d._children ? "lightsteelblue" : "#fff";
             });
 
-        nodeEnter.append("text")
+
+        // nodeEnter.append("circle")
+        //     .attr('class', 'nodeCircle')
+        //     .attr("r", 0)
+        //     .style("fill", function(d) {
+        //         return d._children ? "lightsteelblue" : "#fff";
+        //     });
+        nodeEnter.append("rect")
+            .attr('class', 'nodeCircle')
+            .attr("r", 0)
+            .attr("rx", 4)
+            .attr("ry", 4)
+            .attr("aeuf", 248)
+            .attr("width",nodeDefaultWidth)
+            .attr("height",40)
+            .attr("aeuf", 248)
+            .style({"fill":'red',"stroke":"black","stroke-width":"2","opacity":'1'})
+            .style("fill", function(d) {
+                return d._children ? "lightblue" : "#fff";
+            });
+
+
+        nodeEnter.on("mouseenter", function(){
+            console.log('set to 120px');
+            $(this).children('rect').attr("width", "120px");
+        })
+            .on ("mouseleave", function(){
+            console.log('set to ' + nodeDefaultWidth + 'px');
+            $(this).children('rect').attr("width", nodeDefaultWidth + "px");
+        });
+
+        var link = nodeEnter.append("a").attr("href", function (d) {
+            return d.href;
+        }).on('click', function(e) {
+            console.log(e.href);
+            chrome.tabs.query({active:true,currentWindow:true},function(tabs){
+                var tab = tabs[0];
+                chrome.tabs.update(tab.id, {url: e.href});
+            });
+        });
+
+        link.append("text")
             .attr("x", function(d) {
                 return d.children || d._children ? -10 : 10;
+                //return 50;
             })
-            .attr("dy", ".35em")
+            //.attr("dy", ".35em")
+            .attr("dx", ".50em")
+            .attr("dy", ".550em")
             .attr('class', 'nodeText')
             .attr("text-anchor", function(d) {
                 return d.children || d._children ? "end" : "start";
@@ -264,44 +275,63 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             })
             .style("fill-opacity", 0);
 
-        // phantom node to give us mouseover in a radius around it
-        nodeEnter.append("circle")
-            .attr('class', 'ghostCircle')
-            .attr("r", 30)
-            .attr("opacity", 0.2) // change this to zero to hide the target area
-        .style("fill", "red")
-            .attr('pointer-events', 'mouseover')
-            .on("mouseover", function(node) {
-                overCircle(node);
-            })
-            .on("mouseout", function(node) {
-                outCircle(node);
-            });
+
 
         // Update the text to reflect whether node has children or not.
         node.select('text')
             .attr("x", function(d) {
-                return d.children || d._children ? -10 : 10;
+                return d.children || d._children ? 12 : 12;
+                //return 50;
             })
+            .attr("y", 15)
             .attr("text-anchor", function(d) {
-                return d.children || d._children ? "end" : "start";
+                //return d.children || d._children ? "end" : "start";
+                return d.children || d._children ? "start" : "start";
             })
             .text(function(d) {
                 return d.name;
             });
 
+        nodeEnter.append("text")
+            .attr("x", function(d) {
+                return d.children || d._children ? 2 : 2;
+            })
+            .attr("y", 10)
+            .attr("dx", "0em")
+            .attr("dy", ".623em")
+            .attr('class', 'nodeMinus')
+            .attr("text-anchor", function(d) {
+                //return d.children || d._children ? "end" : "start";
+                return "start";
+            })
+            .text("-")
+            .style("fill-opacity", 1)
+            .on( "click", function (d) {
+                if (d.children) {
+                    $(this).text('+');
+                    $(this).css('fill','green');
+                } else {
+                    $(this).text('-');
+                    $(this).removeAttr('style');
+                }
+                click(d);
+            });
+
+
         // Change the circle fill depending on whether it has children and is collapsed
-        node.select("circle.nodeCircle")
+        node.select("rect.nodeCircle")
             .attr("r", 4.5)
             .style("fill", function(d) {
-                return d._children ? "lightsteelblue" : "#fff";
-            });
+                return d._children ? "lightblue" : "#fff";
+            })
+            
+            ;
 
         // Transition nodes to their new position.
         var nodeUpdate = node.transition()
             .duration(duration)
             .attr("transform", function(d) {
-                return "translate(" + d.y + "," + d.x + ")";
+                return "translate(" + d.y + "," + (d.x-20) + ")";
             });
 
         // Fade the text in

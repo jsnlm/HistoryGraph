@@ -13,10 +13,15 @@
   }
    
   .node text {
-    font-size:10px; 
+    font-size:18px;
     font-family:sans-serif;
   }
-   
+
+  .nodeMinus {
+      font-size:30px !important;
+      fill: red;
+  }
+
   .link {
     fill: none;
     stroke: #ccc;
@@ -38,13 +43,14 @@
   }
 
   body {
-    width:266px;
-    height:293px;
+    width:500px;
+    height:520px;
     margin:0;
     background-color:#eee;
   }
 
   h2 {
     border-bottom: solid 3px grey;
-    margin-bottom:0;
+    margin:0;
+      font-size:20px;
   }

@@ -264,10 +264,12 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
     var overCircle = function(d) {
         selectedNode = d;
         updateTempConnector();
+        console.log("overCircle");
     };
     var outCircle = function(d) {
         selectedNode = null;
-        updateTempConnector();
+        updateTempConnector()
+        console.log("outCircle");
     };
 
     // Function to update the temporary connector indicating dragging affiliation
@@ -382,9 +384,22 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             })
             .on('click', click);
 
+        // nodeEnter.append("rect")
+        //     .attr('class', 'nodeCircle')
+        //     .attr("r", 0)
+        //     .attr("aeuf", 248)
+        //     //.attr("width",40)
+        //     //.attr("height",20)
+        //     //.attr("aeuf", 248)
+        //     //.style({"fill":'red',"stroke":"black","stroke-width":"2","opacity":'0.5'})
+        //     .style("fill", function(d) {
+        //         return d._children ? "lightsteelblue" : "#fff";
+        // });
+
         nodeEnter.append("circle")
             .attr('class', 'nodeCircle')
             .attr("r", 0)
+            .attr("aeuf", 248)
             .style("fill", function(d) {
                 return d._children ? "lightsteelblue" : "#fff";
             });
@@ -405,6 +420,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
 
         // phantom node to give us mouseover in a radius around it
         nodeEnter.append("circle")
+            .attr("aeuf", 249)
             .attr('class', 'ghostCircle')
             .attr("r", 30)
             .attr("opacity", 0.2) // change this to zero to hide the target area
@@ -514,6 +530,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
     // Define the root
     root = treeData;
     root.x0 = viewerHeight / 2;
+    //root.x0 = 20;
     root.y0 = 0;
 
     // Layout the tree initially and center on the root node.
