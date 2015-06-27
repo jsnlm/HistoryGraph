@@ -1,6 +1,9 @@
 var counter = 0;
+var current = 0;
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+    console.log(changeInfo);
+    console.log(tab);
     if(changeInfo && changeInfo.url) {
         if(sessionStorage.getItem('root')) {
             var parentNode = JSON.parse(sessionStorage.getItem((counter-1).toString()));
@@ -10,6 +13,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
             sessionStorage.setItem(counter.toString(), JSON.stringify(newNode));
             console.log(sessionStorage.getItem(counter.toString()));
             counter++;
+            current++;
         } else {
             var root = {name: "williamChops", href: tab.url, parent: -1, children: []};
             sessionStorage.setItem('root', JSON.stringify(root));
@@ -46,9 +50,13 @@ function replaceHash(tree) {
 }
 
 // Todo: Need to change to graph when user moves back or forward
-//chrome.webNavigation.onCommitted.addListener(function(details) {
-//    if(details.transitionQualifiers[0] == "forward_back")
-//        alert(details.url);
-//    console.log(details.url);
-//    window.state
-//});
+chrome.webNavigation.onCommitted.addListener(function(details) {
+        console.log(details);
+    if(details.transitionQualifiers[0] == "forward_back") {
+    //    var oldNode = JSON.parse(sessionStorage.getItem(current.toString()));
+    //    if (JSON.parse(sessionStorage.getItem(oldNode.parent.toString())).href == details.href) {
+    //        current--;
+    //    }
+    }
+    lock = false;
+});
