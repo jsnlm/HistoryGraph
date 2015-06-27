@@ -5,8 +5,15 @@
   "permissions": [
     "history"
   ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["jquery-1.11.1.min.js", "logic.js"],
+      "run_at:": "document_start"
+    }
+  ],
   "browser_action": {
-    "default_popup": "typedUrls.html",
+    "default_popup": "GraphView.html",
     "default_icon": "clock.png"
   },
   "manifest_version": 2
