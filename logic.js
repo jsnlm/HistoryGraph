@@ -252,8 +252,11 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
         link.append("text")
             .attr("x", function(d) {
                 return d.children || d._children ? -10 : 10;
+                //return 50;
             })
-            .attr("dy", ".35em")
+            //.attr("dy", ".35em")
+            .attr("dx", ".50em")
+            .attr("dy", ".500em")
             .attr('class', 'nodeText')
             .attr("text-anchor", function(d) {
                 return d.children || d._children ? "end" : "start";
@@ -281,14 +284,33 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
         // Update the text to reflect whether node has children or not.
         node.select('text')
             .attr("x", function(d) {
-                return d.children || d._children ? -10 : 10;
+                return d.children || d._children ? 12 : 12;
+                //return 50;
             })
+            .attr("y", 10)
             .attr("text-anchor", function(d) {
-                return d.children || d._children ? "end" : "start";
+                //return d.children || d._children ? "end" : "start";
+                return d.children || d._children ? "start" : "start";
             })
             .text(function(d) {
                 return d.name;
             });
+
+        link.append("text")
+            .attr("x", function(d) {
+                return d.children || d._children ? 2 : 2;
+            })
+            .attr("y", 10)
+            .attr("dx", ".50em")
+            .attr("dy", ".500em")
+            .attr('class', 'nodeText')
+            .attr("text-anchor", function(d) {
+                //return d.children || d._children ? "end" : "start";
+                return "start";
+            })
+            .text("+")
+            .style("fill-opacity", 1);
+
 
         // Change the circle fill depending on whether it has children and is collapsed
         node.select("circle.nodeCircle")
