@@ -36,12 +36,7 @@
   .ghostCircle, .activeDrag .ghostCircle{
        display: none;
   }
-  .nodeCircle{
-    width: 100px;
-  }
-  .nodeCircle:hover{
-    width: 50px;
-  }
+
   body {
     width:500px;
     height:520px;

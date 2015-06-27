@@ -228,23 +228,16 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
               console.log($(this).attr("height"));
               console.log("Aaaaa");
               click(e);
-            })
-            .on ("mouseenter", function(){
-                $(this).attr("width", "120px");
-            })
+            });
+
+        nodeEnter.on("mouseenter", function(){
+            console.log('set to 120px');
+            $(this).children('rect').attr("width", "120px");
+        })
             .on ("mouseleave", function(){
-                $(this).attr("width", nodeDefaultWidth + "px");
-            })
-                // .hover(function(e) {
-                //   console.log($(this).attr("height"));
-                //   console.log("Bbbbb");
-                // }
-                
-            //onhover(function() {
-              // console.log($(this).attr("height"));
-              // console.log("Bbbbb");
-            //}
-            ;
+            console.log('set to ' + nodeDefaultWidth + 'px');
+            $(this).children('rect').attr("width", nodeDefaultWidth + "px");
+        });
 
         var link = nodeEnter.append("a").attr("href", function (d) {
             return d.href;
