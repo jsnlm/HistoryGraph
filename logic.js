@@ -2,8 +2,8 @@
 //Hover shows link
 //Click link, it'll page
 //Click plus sign, it'll expand branches
-
 treeJSON = d3.json("graphData.json", function(error, treeData) {
+    treeData = chrome.extension.getBackgroundPage().getTree();
   //  console.log(treeData);
     // Calculate total nodes, max label length
     var totalNodes = 0;
