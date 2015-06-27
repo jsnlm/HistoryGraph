@@ -148,6 +148,7 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
     // Toggle children on click.
 
     function click(d) {
+
         if (d3.event.defaultPrevented) return; // click suppressed
         d = toggleChildren(d);
         update(d);
@@ -197,6 +198,8 @@ treeJSON = d3.json("graphData.json", function(error, treeData) {
             .attr("class", "node")
             .attr("transform", function(d) {
                 return "translate(" + source.y0 + "," + source.x0 + ")";
+            }).attr("href", function (d) {
+                return d.href;
             })
             .on('click', click);
 
