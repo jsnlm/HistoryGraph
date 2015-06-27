@@ -1,22 +1,52 @@
 var counter = 0;
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+//    console.log(changeInfo);
+  //  console.log(tab);
+    var current = 0;
     if(changeInfo && changeInfo.url) {
         if(sessionStorage.getItem('root')) {
-            var parentNode = JSON.parse(sessionStorage.getItem((counter-1).toString()));
-            parentNode.children.push(counter.toString());
-            var newNode = {name: "williamChops", href: tab.url, parent: (counter-1).toString(), children: []};
-            sessionStorage.setItem((counter-1).toString(), JSON.stringify(parentNode));
+            current = sessionStorage.getItem('current');
+            var oldNode = JSON.parse(sessionStorage.getItem(current.toString()));
+            var parentNode = JSON.parse(sessionStorage.getItem((oldNode.parent).toString()));
+            console.log(changeInfo.url);
+            console.log(tab.url);
+            if (parentNode)
+            console.log(parentNode.href);
+            if (parentNode && parentNode.href == tab.url) {
+                current = oldNode.parent;
+                console.log(current);
+                sessionStorage.setItem('current', current);
+                return;
+            } else {
+                for (var i=0; i < oldNode.children.length; i++) {
+                    var childNode = JSON.parse(sessionStorage.getItem(oldNode.children[i].toString()));
+                    if (childNode.href == tab.url) {
+                        current = oldNode.children[i];
+                        console.log(current);
+                        sessionStorage.setItem('current', current);
+                        return;
+                    }
+                }
+            }
+
+            oldNode.children.push(counter.toString());
+            var newNode = {name: "williamChops", href: tab.url, parent: (current).toString(), children: []};
+            sessionStorage.setItem((current).toString(), JSON.stringify(oldNode));
             sessionStorage.setItem(counter.toString(), JSON.stringify(newNode));
-            console.log(sessionStorage.getItem(counter.toString()));
+         //   console.log(sessionStorage.getItem(counter.toString()));
+            current = counter;
             counter++;
         } else {
             var root = {name: "williamChops", href: tab.url, parent: -1, children: []};
             sessionStorage.setItem('root', JSON.stringify(root));
             sessionStorage.setItem(counter.toString(), JSON.stringify(root));
-            console.log(sessionStorage.getItem(counter.toString()));
+        //    console.log(sessionStorage.getItem(counter.toString()));
+            current = counter;
             counter++;
         }
+        console.log(current);
+        sessionStorage.setItem('current', current);
     }
 });
 
@@ -48,10 +78,19 @@ function replaceHash(tree) {
     return tree;
 }
 
-// Todo: Need to change to graph when user moves back or forward
+//// Todo: Need to change to graph when user moves back or forward
 //chrome.webNavigation.onCommitted.addListener(function(details) {
-//    if(details.transitionQualifiers[0] == "forward_back")
-//        alert(details.url);
-//    console.log(details.url);
-//    window.state
+//        console.log(details);
+//    if(details.transitionQualifiers[0] == "forward_back") {
+//    //    var oldNode = JSON.parse(sessionStorage.getItem(current.toString()));
+//    //    if (JSON.parse(sessionStorage.getItem(oldNode.parent.toString())).href == details.href) {
+//    //        current--;
+//    //    }
+//    }
+//    lock = false;
 //});
+
+/* Todo: concurrency problem with forward/back button and regular page clicks
+            session storage is persisting thru multiple tabs (or my code is bad)
+            modify history to conform with our graph navigation
+ */
