@@ -1,4 +1,3 @@
-var counter = 0;
 var shouldUpdate = true;
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
@@ -7,40 +6,23 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
         return;
     }
 
-    var current = 0;
     if(changeInfo && changeInfo.url) {
-        if(sessionStorage.getItem('root' + tab.id)) {
-            current = sessionStorage.getItem('current' + tab.id);
-            var oldNode = JSON.parse(sessionStorage.getItem(current.toString()));
-            var parentNode = JSON.parse(sessionStorage.getItem((oldNode.parent).toString()));
-            if (parentNode)
-            if (parentNode && parentNode.href == tab.url) {
-                current = oldNode.parent;
-                sessionStorage.setItem('current' + tab.id, current);
-                return;
-            } else {
-                for (var i=0; i < oldNode.children.length; i++) {
-                    var childNode = JSON.parse(sessionStorage.getItem(oldNode.children[i].toString()));
-                    if (childNode.href == tab.url) {
-                        current = oldNode.children[i];
-                        sessionStorage.setItem('current' + tab.id, current);
-                        return;
-                    }
-                }
-            }
+        var current = tab.id + ';' + tab.url;
 
-            oldNode.children.push(counter.toString());
-            var newNode = {icon : "http://www.google.com/s2/favicons?domain="+tab.url, nodeId: counter, name: "williamChops", href: tab.url, parent: (current).toString(), children: []};
-            sessionStorage.setItem((current).toString(), JSON.stringify(oldNode));
-            sessionStorage.setItem(counter.toString(), JSON.stringify(newNode));
-            current = counter;
-            counter++;
-        } else {
-            var root = {icon : "http://www.google.com/s2/favicons?domain="+tab.url, nodeId: counter, name: "williamChops", href: tab.url, parent: -1, children: []};
-            sessionStorage.setItem('root' + tab.id, counter);
-            sessionStorage.setItem(counter.toString(), JSON.stringify(root));
-            current = counter;
-            counter++;
+        if (sessionStorage.getItem(current)) { //case existing node
+            //do nothing
+        } else if(sessionStorage.getItem('root' + tab.id)) { //case new child
+            var prevCurr = sessionStorage.getItem('current' + tab.id);
+            var oldNode = JSON.parse(sessionStorage.getItem(prevCurr));
+
+            oldNode.children.push(current);
+            var newNode = {href: tab.url, parent: prevCurr, children: [], icon : "http://www.google.com/s2/favicons?domain="+tab.url};
+            sessionStorage.setItem(prevCurr, JSON.stringify(oldNode));
+            sessionStorage.setItem(current, JSON.stringify(newNode));
+        } else { //case new root
+            var root = {href: tab.url, parent: -1, children: [], icon : "http://www.google.com/s2/favicons?domain="+tab.url};
+            sessionStorage.setItem('root' + tab.id, current);
+            sessionStorage.setItem(current, JSON.stringify(root));
         }
         sessionStorage.setItem('current' + tab.id, current);
     }
@@ -49,16 +31,17 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 function getTree(tabId) {
     var root = JSON.parse(sessionStorage.getItem(sessionStorage.getItem('root' + tabId)));
     var currentKey = sessionStorage.getItem('current' + tabId);
-    return replaceHash(root, currentKey);
+    console.log(currentKey);
+    console.log(currentKey.replace(tabId + ';', ''));
+    return replaceHash(root, currentKey.replace(tabId + ';', ''));
 }
 
 function replaceHash(tree, currentKey) {
-    if (tree.nodeId == currentKey)
+    if (tree.href == currentKey)
         tree.active = true;
     delete tree["parent"];
     var children = tree['children'];
     for (var i=0; i < tree.children.length; i++) {
-        var childNum = children[i];
         children[i] = JSON.parse(sessionStorage.getItem(children[i].toString()));
         replaceHash(children[i], currentKey);
     }
@@ -66,7 +49,7 @@ function replaceHash(tree, currentKey) {
 }
 
 function navigatePage(tabId, id) {
-    sessionStorage.setItem('current' + tabId, id);
+    sessionStorage.setItem('current' + tabId, tabId + ';' + id);
     shouldUpdate = false;
 }
 

@@ -5,12 +5,11 @@
 
 var activeNode = null;
 
-treeJSON = d3.json("graphData.json", function(error, treeData) {
-    chrome.tabs.query({active:true,currentWindow:true},function(tabs){
-        treeData = chrome.extension.getBackgroundPage().getTree(tabs[0].id);
-        activeNode = treeData;
-        createGraph(treeData);
-    });
+chrome.tabs.query({active:true,currentWindow:true},function(tabs){
+    console.log(tabs);
+    treeData = chrome.extension.getBackgroundPage().getTree(tabs[0].id);
+    activeNode = treeData;
+    createGraph(treeData);
 });
 
 function createGraph(treeData) {
@@ -21,7 +20,6 @@ function createGraph(treeData) {
     var maxLabelLength = 0;
     // panning variables
     var panSpeed = 200;
-    var panBoundary = 20; // Within 20px from edges will pan when dragging.
     // Misc. variables
     var i = 0;
     var duration = 750;
@@ -59,22 +57,12 @@ function createGraph(treeData) {
     // Call visit function to establish maxLabelLength
     visit(treeData, function(d) {
         totalNodes++;
-        maxLabelLength = Math.max(d.name.length, maxLabelLength);
+        maxLabelLength = Math.max(d.href.length, maxLabelLength);
 
     }, function(d) {
         return d.children && d.children.length > 0 ? d.children : null;
     });
 
-
-    // sort the tree according to the node names
-
-    function sortTree() {
-        tree.sort(function(a, b) {
-            return b.name.toLowerCase() < a.name.toLowerCase() ? 1 : -1;
-        });
-    }
-    // Sort the tree initially incase the JSON isn't in a sorted order.
-    sortTree();
 
     // TODO: Pan function, can be better implemented.
 
@@ -137,15 +125,6 @@ function createGraph(treeData) {
             d._children = null;
         }
     }
-
-    var overCircle = function(d) {
-        selectedNode = d;
-        updateTempConnector();
-    };
-    var outCircle = function(d) {
-        selectedNode = null;
-        updateTempConnector();
-    };
 
     function centerNode(source) {
         scale = zoomListener.scale();
@@ -227,9 +206,7 @@ function createGraph(treeData) {
         // Enter any new nodes at the parent's previous position.
         var nodeEnter = node.enter().append("g")
             .attr("class", "node")
-            .attr("transform", function(d) {
-                return "translate(" + source.y0 + "," + source.x0 + ")";
-            });
+            .attr("transform", "translate(" + source.y0 + "," + source.x0 + ")");
 
 
         // nodeEnter.append("circle")
@@ -274,7 +251,7 @@ function createGraph(treeData) {
         }).on('click', function(e) {
             chrome.tabs.query({active:true,currentWindow:true},function(tabs){
                 var tab = tabs[0];
-                chrome.extension.getBackgroundPage().navigatePage(tab.id, e.nodeId);
+                chrome.extension.getBackgroundPage().navigatePage(tab.id, e.href);
                 chrome.tabs.update(tab.id, {url: e.href});
                 window.close();
             });
@@ -293,7 +270,7 @@ function createGraph(treeData) {
                 return d.children || d._children ? "end" : "start";
             })
             .text(function(d) {
-                return d.name;
+                return d.href;
             })
             .style("fill-opacity", 0);
 
@@ -316,15 +293,6 @@ function createGraph(treeData) {
             })
             .style({"display":'none'});
 
-        // link.append("text")
-        //     .attr("x", 2)
-        //     .attr("y", 10)
-        //     .attr("dx", ".50em")
-        //     .attr("dy", ".500em")
-        //     .attr('class', 'nodeText')
-        //     .attr("text-anchor", "start")
-        //     .text("+");
-
         link.append("image")
             .attr("xlink:href", function(d){ return d.icon; })
             .attr("x", 20)
@@ -344,10 +312,7 @@ function createGraph(treeData) {
             .attr("dx", "0em")
             .attr("dy", ".623em")
             .attr('class', 'nodeMinus')
-            .attr("text-anchor", function(d) {
-                //return d.children || d._children ? "end" : "start";
-                return "start";
-            })
+            .attr("text-anchor", "start")
             .text("-")
             .style("fill-opacity", 1)
             .on( "click", function (d) {
@@ -384,9 +349,7 @@ function createGraph(treeData) {
         // Transition exiting nodes to the parent's new position.
         var nodeExit = node.exit().transition()
             .duration(duration)
-            .attr("transform", function(d) {
-                return "translate(" + source.y + "," + source.x + ")";
-            })
+            .attr("transform", "translate(" + source.y + "," + source.x + ")")
             .remove();
 
         nodeExit.select("circle")
@@ -396,15 +359,15 @@ function createGraph(treeData) {
             .style("fill-opacity", 0);
 
         // Update the links…
-        var link = svgGroup.selectAll("path.link")
+        var linkage = svgGroup.selectAll("path.link")
             .data(links, function(d) {
                 return d.target.id;
             });
 
         // Enter any new links at the parent's previous position.
-        link.enter().insert("path", "g")
+        linkage.enter().insert("path", "g")
             .attr("class", "link")
-            .attr("d", function(d) {
+            .attr("d", function() {
                 var o = {
                     x: source.x0,
                     y: source.y0
@@ -416,14 +379,14 @@ function createGraph(treeData) {
             });
 
         // Transition links to their new position.
-        link.transition()
+        linkage.transition()
             .duration(duration)
             .attr("d", diagonal);
 
         // Transition exiting nodes to the parent's new position.
-        link.exit().transition()
+        linkage.exit().transition()
             .duration(duration)
-            .attr("d", function(d) {
+            .attr("d", function() {
                 var o = {
                     x: source.x,
                     y: source.y
@@ -446,7 +409,7 @@ function createGraph(treeData) {
     var svgGroup = baseSvg.append("g");
 
     // Define the current
-    var root = treeData;
+    root = treeData;
     root.x0 = viewerHeight / 2;
     root.y0 = 0;
 
