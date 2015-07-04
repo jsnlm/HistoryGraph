@@ -6,8 +6,7 @@
 var activeNode = null;
 
 chrome.tabs.query({active:true,currentWindow:true},function(tabs){
-    console.log(tabs);
-    treeData = chrome.extension.getBackgroundPage().getTree(tabs[0].id);
+    var treeData = chrome.extension.getBackgroundPage().getTree(tabs[0].id);
     activeNode = treeData;
     createGraph(treeData);
 });
@@ -46,11 +45,9 @@ function createGraph(treeData) {
         visitFn(parent);
 
         var children = childrenFn(parent);
-        if (children) {
-            var count = children.length;
-            for (var i = 0; i < count; i++) {
-                visit(children[i], visitFn, childrenFn);
-            }
+        var count = children.length;
+        for (var i = 0; i < count; i++) {
+            visit(children[i], visitFn, childrenFn);
         }
     }
 
@@ -60,7 +57,7 @@ function createGraph(treeData) {
         maxLabelLength = Math.max(d.href.length, maxLabelLength);
 
     }, function(d) {
-        return d.children && d.children.length > 0 ? d.children : null;
+        return d.children; //&& d.children.length > 0 ? d.children : null;
     });
 
 
@@ -70,7 +67,8 @@ function createGraph(treeData) {
         var speed = panSpeed;
         if (panTimer) {
             clearTimeout(panTimer);
-            translateCoords = d3.transform(svgGroup.attr("transform"));
+            var translateCoords = d3.transform(svgGroup.attr("transform"));
+            var translateX = 0, translateY = 0;
             if (direction == 'left' || direction == 'right') {
                 translateX = direction == 'left' ? translateCoords.translate[0] + speed : translateCoords.translate[0] - speed;
                 translateY = translateCoords.translate[1];
@@ -78,14 +76,14 @@ function createGraph(treeData) {
                 translateX = translateCoords.translate[0];
                 translateY = direction == 'up' ? translateCoords.translate[1] + speed : translateCoords.translate[1] - speed;
             }
-            scaleX = translateCoords.scale[0];
-            scaleY = translateCoords.scale[1];
-            scale = zoomListener.scale();
+        //    scaleX = translateCoords.scale[0];
+         //   scaleY = translateCoords.scale[1];
+            var scale = zoomListener.scale();
             svgGroup.transition().attr("transform", "translate(" + translateX + "," + translateY + ")scale(" + scale + ")");
             d3.select(domNode).select('g.node').attr("transform", "translate(" + translateX + "," + translateY + ")");
             zoomListener.scale(zoomListener.scale());
             zoomListener.translate([translateX, translateY]);
-            panTimer = setTimeout(function() {
+            var panTimer = setTimeout(function() {
                 pan(domNode, speed, direction);
             }, 50);
         }
@@ -127,9 +125,9 @@ function createGraph(treeData) {
     }
 
     function centerNode(source) {
-        scale = zoomListener.scale();
-        x = -source.y0;
-        y = -source.x0;
+        var scale = zoomListener.scale();
+        var x = -source.y0;
+        var y = -source.x0;
         x = x * scale + viewerWidth / 2;
         y = y * scale + viewerHeight / 2;
         d3.select('g').transition()
@@ -198,7 +196,7 @@ function createGraph(treeData) {
         });
 
         // Update the nodes…
-        node = svgGroup.selectAll("g.node")
+        var node = svgGroup.selectAll("g.node")
             .data(nodes, function(d) {
                 return d.id || (d.id = ++i);
             });
@@ -251,7 +249,6 @@ function createGraph(treeData) {
         }).on('click', function(e) {
             chrome.tabs.query({active:true,currentWindow:true},function(tabs){
                 var tab = tabs[0];
-                chrome.extension.getBackgroundPage().navigatePage(tab.id, e.href);
                 chrome.tabs.update(tab.id, {url: e.href});
                 window.close();
             });
