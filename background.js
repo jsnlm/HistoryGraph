@@ -3,6 +3,7 @@ var tabs = {};
 chrome.tabs.onReplaced.addListener(function (newId, removedId) {
   //  console.log('newId: ' + newId);
  //   console.log('oldId: ' + removedId);
+    //handler for if tab id randomly changes for the current tab
     tabs[newId] = tabs[removedId];
     delete tabs[removedId];
 });
